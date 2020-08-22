@@ -16,6 +16,8 @@ https://pysimplegui.readthedocs.io/en/latest/call%20reference/#systemtray
 
 from pywinusb import hid
 from PySimpleGUI import SystemTray
+import ctypes
+hllDll = ctypes.WinDLL ("User32.dll")
 
 
 def sample_handler(data):
@@ -68,6 +70,18 @@ def menu_update():
     return hids_dict
 
 
+# https://stackoverflow.com/questions/21160100/python-3-x-getting-the-state-of-caps-lock-num-lock-scroll-lock-on-windows
+# https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+# https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getkeystate
+def check_locks():
+    lock_keys = {
+        'VK_CAPITAL': 0x14,
+        'VK_NUMLOCK': 0x90,
+        'VK_SCROLL': 0x91,
+    }
+    lock_states={k:hllDll.GetKeyState(v) for k,v in lock_keys.items()}
+    print(lock_states)
+
 if __name__ == "__main__":
     # Create the tray icon
     tray = SystemTray(
@@ -77,13 +91,15 @@ if __name__ == "__main__":
     hids_dict = menu_update()  # Populate the menu with HID devices
     device = None
     while True:  # The event loop
-        menu_item = tray.read()  # Read the systemtray events/values
+        menu_item = tray.read(timeout=100)  # Read the systemtray events/values
         if menu_item == 'Exit':
             break
         elif menu_item == 'Refresh':
             hids_dict = menu_update()  # Refesh the list of HID devices
         elif menu_item in [None, '__ACTIVATED__']:
             continue  # If there was no interaction of consequence
+        elif menu_item == '__TIMEOUT__':
+            check_locks()
         else:
             # Otherwise assume a device was selected
             try:
