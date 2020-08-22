@@ -23,26 +23,24 @@ hllDll = ctypes.WinDLL ("User32.dll")
 def sample_handler(data):
     # print("Raw data: {0}".format(data))  # Print raw data for debug
     data = [item for item in data if item != 0]  # remove blank characters
-    if data is None:
-        icon = 'default.png'  # Use this if you can't find a match
-    else:
-        data = [chr(item) for item in data]  # Convert int to chr
-        icon = ''.join(data) + '.png'
-    tray.Update(filename=icon)  # Update the icon on the screen
+    data = [chr(item) for item in data]  # Convert int to chr
+    icon = ''.join(data) + '.png'
+    try:
+        tray.Update(filename=icon)  # Update the icon on the screen
+    except:
+        tray.Update(filename='default.png')  # Use this if file access error
 
 
 def hid_devices():
     all_hids = hid.find_all_hid_devices()  # Get a list of HID objects
-    if all_hids:
-        # Convert to a dictionary of Names:Objects
-        hids_dict = {}
-        for device in all_hids:
-            device_name = str("{0.vendor_name} {0.product_name}" \
-                    "(vID=0x{1:04x}, pID=0x{2:04x})"\
-                    "".format(device, device.vendor_id, device.product_id))
-            hids_dict[device_name] = device
-        return hids_dict
-    return None
+    # Convert to a dictionary of Names:Objects
+    hids_dict = {}
+    for device in all_hids:
+        device_name = str("{0.vendor_name} {0.product_name}" \
+                "(vID=0x{1:04x}, pID=0x{2:04x})"\
+                "".format(device, device.vendor_id, device.product_id))
+        hids_dict[device_name] = device
+    return hids_dict
 
 
 def hid_read(hids_dict, menu_item):
@@ -79,8 +77,8 @@ def check_locks():
         'VK_NUMLOCK': 0x90,
         'VK_SCROLL': 0x91,
     }
-    lock_states={k:hllDll.GetKeyState(v) for k,v in lock_keys.items()}
-    print(lock_states)
+    lock_states = {k:hllDll.GetKeyState(v) for k,v in lock_keys.items()}
+
 
 if __name__ == "__main__":
     # Create the tray icon
