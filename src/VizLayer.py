@@ -94,7 +94,12 @@ if __name__ == "__main__":
             break
         elif menu_item == 'Refresh':
             hids_dict = menu_update()  # Refesh the list of HID devices
-        elif menu_item in [None, '__ACTIVATED__']:
+        elif menu_item in [
+                    None,
+                    '__ACTIVATED__',
+                    '__MESSAGE_CLICKED__',
+                    '__DOUBLE_CLICKED__',
+            ]:
             continue  # If there was no interaction of consequence
         elif menu_item == '__TIMEOUT__':
             check_locks()
