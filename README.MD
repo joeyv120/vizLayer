@@ -21,16 +21,19 @@ uiint32_t layer_state_set_user(uint32_t state) {
 }
 ```
 
-The program looks for a PNG file named for the active layer number. For example, a keyboard with 3 layers will require png files named 0.png, 1.png, and 2.png. There are 8 simple example icons provided. The "default.png" file is loaded at program start, prior to connecting to an HID device. All of these png files can be customized, as long as this file naming scheme is followed.
-
 ## Usage
 
-1. Customize the PNG icons if desired, ensuring the file names match your layer numbers.
-2. Run the python script.
+1. Downlaod and unzip VizLayer.zip
+2. Run VizLayer.exe (some anti-virus programs will throw flags, so you may need to create an exeption)
 3. Right-click on the icon and select the appropriate HID device.
 4. Watch the icon change with the keyboard layers.
+
+This compiled version currently supports 8 layers (0-7), and the icons are hardcoded.
+
+## Notes on source code:
+
+The program looks for a PNG file named for the active layer number. For example, a keyboard with 3 layers will require png files named 0.png, 1.png, and 2.png. There are 8 simple example icons provided. The "default.png" file is loaded at program start, prior to connecting to an HID device. All of these png files can be customized, as long as this file naming scheme is followed.
 
 ## Future Work
 * Add indication of Caps lock and number lock states
 * Add error handling, and detect communication errors.
-* Compile into an executable.
