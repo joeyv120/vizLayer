@@ -15,7 +15,8 @@ https://pysimplegui.readthedocs.io/en/latest/call%20reference/#systemtray
 
 
 from pywinusb import hid
-from PySimpleGUI import SystemTray
+from PySimpleGUI import SystemTray as float_icon
+# from PySimpleGUIQt import SystemTray as sys_tray
 import ctypes
 hllDll = ctypes.WinDLL ("User32.dll")
 
@@ -26,9 +27,9 @@ def sample_handler(data):
     data = [chr(item) for item in data]  # Convert int to chr
     icon = ''.join(data) + '.png'
     try:
-        tray.Update(filename=icon)  # Update the icon on the screen
+        layer_icon.Update(filename=icon)  # Update the icon on the screen
     except:
-        tray.Update(filename='default.png')  # Use this if file access error
+        layer_icon.Update(filename='default.png')  # Use this if file access error
 
 
 def hid_devices():
@@ -64,7 +65,7 @@ def menu_update():
             'E&xit'
         ]
     ]
-    tray.update(menu=menu_items)  # Update the icon with the menu list
+    layer_icon.update(menu=menu_items)  # Update the icon with the menu list
     return hids_dict
 
 
@@ -78,18 +79,31 @@ def check_locks():
         'VK_SCROLL': 0x91,
     }
     lock_states = {k:hllDll.GetKeyState(v) for k,v in lock_keys.items()}
+    # print(lock_states)
+    # if lock_states['VK_CAPITAL']:
+    #     caps_tray.un_hide()
+    # else:
+    #     caps_tray.Hide()
 
 
 if __name__ == "__main__":
     # Create the tray icon
-    tray = SystemTray(
+    layer_icon = float_icon(
             menu=['BLANK', ['Refresh', '---', 'E&xit']],
             filename='default.png',
     )
     hids_dict = menu_update()  # Populate the menu with HID devices
     device = None
+
+    # caps_icon = b'iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAYNJREFUWIXtlUErRFEUx39vjEKjLCYLFjRlMz7CFIqQbCwoZGMlWc5XmK/gK1gpCxslC7GeFQtFSpTYKCKGsZjzzJnX3Dvv3XlYzPzr1L33nfM/v3vu4kFbbf2eJoDl/2z+DHwAKy4Gc8CSxKhj87JEZIhBoKQMjppo7gSRDxSXBMq1eWSIohR8qeJ8k81DQ2RV411lWrTUjIdsHgqioBIXgT2q08jG0NwK4QFXkvAG9ALrqqgQU/MaCE8Z5oATWR8As0A/cAd0ANdARooBhoDuANQZkKgzKV9TwK3af+qP24puU52fqvOcxdw3tN16OFjg03ZSeXNfT8CYxIU6X20A4Kx5wr3bg8Ca5DyBsDdLAzMhc0MrBbxQIXwHBoCuQGxRvcWOxSvyBADWVMK+wTgtcGWBTcUFkKB2/KbbPQKHsu4BFgx5keUBk0BS9sfAqyE3A4zI+gY4r5MzLZ4m2fxbVLZxNdIG0BcXiIsucf8R/YTtx/EnSjZOMaoI3McF0lbr6hvtpdI+486dxgAAAABJRU5ErkJggg=='
+
+    # caps_tray = sys_tray(
+    #     # menu=[[]],
+    #     data_base64=caps_icon,
+    #     )
+
     while True:  # The event loop
-        menu_item = tray.read(timeout=100)  # Read the systemtray events/values
+        menu_item = layer_icon.read(timeout=100)  # Read the systemtray events/values
         if menu_item == 'Exit':
             break
         elif menu_item == 'Refresh':
