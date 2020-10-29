@@ -11,11 +11,6 @@ and changes the icon with the layer.
 For help with required modules:
 https://github.com/rene-aguirre/pywinusb/blob/master/examples/raw_data.py
 https://pysimplegui.readthedocs.io/en/latest/call%20reference/#systemtray
-
-To do:
-    * Implement bluetooth: try this one: https://github.com/tmcneal/bluefang
-    * Default icon when the source changes, or the refresh button is pressed
-
 """
 
 
@@ -27,16 +22,15 @@ hllDll = ctypes.WinDLL ("User32.dll")
 
 
 def sample_handler(data):
-    # print("\nRaw data: {0}".format(data))  # Print raw data for debug
+    # print("Raw data: {0}".format(data))  # Print raw data for debug
     data = [item for item in data if item != 0]  # remove blank characters
-    # print(data)
     data = [chr(item) for item in data]  # Convert int to chr
-    # print(data)
-    icon = 'data\\' + ''.join(data[-1]) + '.png'  # Only read the last one of multiple
-    # try:
-    tray.Update(filename=icon)  # Update the icon on the screen
-    # except:
-        # tray.Update(filename='data\\default.png')  # Use this if file access error
+    icon = ''.join(data) + '.png'
+    try:
+        layer_icon.Update(filename=icon)  # Update the icon on the screen
+    except:
+        layer_icon.Update(filename='default.png')  # Use this if file access error
+
 
 def hid_devices():
     all_hids = hid.find_all_hid_devices()  # Get a list of HID objects
@@ -96,7 +90,7 @@ if __name__ == "__main__":
     # Create the tray icon
     layer_icon = float_icon(
             menu=['BLANK', ['Refresh', '---', 'E&xit']],
-            filename='data\\default.png',
+            filename='default.png',
     )
     hids_dict = menu_update()  # Populate the menu with HID devices
     device = None

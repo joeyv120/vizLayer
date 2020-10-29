@@ -1,2 +1,0 @@
-if pyinstaller fails to build correctly with invailid win32 file, use pip to uninstill and reinstall pywin32 and pyinstaller
-to compile: pyinstaller VizLayer_compiler.spec
