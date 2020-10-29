@@ -83,7 +83,7 @@ def check_locks():
         'VK_NUMLOCK': 0x90,
         'VK_SCROLL': 0x91,
     }
-    lock_states = {k:hllDll.GetKeyState(v) for k,v in lock_keys.items()}
+    # lock_states = {k:hllDll.GetKeyState(v) for k,v in lock_keys.items()}
 
 
 if __name__ == "__main__":
