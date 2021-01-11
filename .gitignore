@@ -5,3 +5,4 @@ src/dist
 src/pywinusb
 src/VizLayer.spec
 .gitignore
+/VizLayer
