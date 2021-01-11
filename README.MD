@@ -28,7 +28,7 @@ uiint32_t layer_state_set_user(uint32_t state) {
 3. Right-click on the icon and select the appropriate HID device.
 4. Watch the icon change with the keyboard layers.
 
-This compiled version currently supports 8 layers (0-7), and the icons are hardcoded.
+This compiled version currently supports 8 layers (0-7), and the icon names are hardcoded, but the icons can be changed, but the naming convention must be maintained. Icons are located in the /data folder.
 
 ## Notes on source code:
 
