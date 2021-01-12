@@ -22,7 +22,7 @@ To do:
 from pywinusb import hid
 from PySimpleGUI import SystemTray
 import ctypes
-hllDll = ctypes.WinDLL ("User32.dll")
+hllDll = ctypes.WinDLL("User32.dll")
 
 
 def sample_handler(data):
@@ -31,20 +31,23 @@ def sample_handler(data):
     # print(data)
     data = [chr(item) for item in data]  # Convert int to chr
     # print(data)
-    icon = 'data\\' + ''.join(data[-1]) + '.png'  # Only read the last one of multiple
+    icon = 'data\\' + ''.join(data[-1]) + '.png'  # read the last if multiple
     # try:
     tray.Update(filename=icon)  # Update the icon on the screen
     # except:
-        # tray.Update(filename='data\\default.png')  # Use this if file access error
+        # tray.Update(filename='data\\default.png')  # Use this on file error
+
 
 def hid_devices():
     all_hids = hid.find_all_hid_devices()  # Get a list of HID objects
     # Convert to a dictionary of Names:Objects
     hids_dict = {}
     for device in all_hids:
-        device_name = str("{0.vendor_name} {0.product_name}" \
-                "(vID=0x{1:04x}, pID=0x{2:04x})"\
-                "".format(device, device.vendor_id, device.product_id))
+        device_name = str(
+                "{0.vendor_name} {0.product_name}"
+                "(vID=0x{1:04x}, pID=0x{2:04x})"
+                "".format(device, device.vendor_id, device.product_id)
+        )
         hids_dict[device_name] = device
     return hids_dict
 
@@ -83,7 +86,7 @@ def check_locks():
         'VK_NUMLOCK': 0x90,
         'VK_SCROLL': 0x91,
     }
-    lock_states = {k:hllDll.GetKeyState(v) for k,v in lock_keys.items()}
+    lock_states = {k: hllDll.GetKeyState(v) for k, v in lock_keys.items()}
     return lock_states
 
 
@@ -109,7 +112,8 @@ if __name__ == "__main__":
             ]:
             continue  # If there was no interaction of consequence
         elif menu_item == '__TIMEOUT__':
-            check_locks()
+            lock_states = check_locks()
+            # change_locks(lock_states)
         else:
             # Otherwise assume a device was selected
             try:
