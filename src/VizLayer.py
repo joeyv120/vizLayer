@@ -33,9 +33,9 @@ def sample_handler(data):
     # print(data)
     icon = 'data\\' + ''.join(data[-1]) + '.png'  # read the last if multiple
     # try:
-    tray.Update(filename=icon)  # Update the icon on the screen
+    tray_layers.Update(filename=icon)  # Update the icon on the screen
     # except:
-        # tray.Update(filename='data\\default.png')  # Use this on file error
+    # tray_layers.Update(filename='data\\default.png')  # Use this on error
 
 
 def hid_devices():
@@ -73,7 +73,7 @@ def menu_update():
             'E&xit'
         ]
     ]
-    tray.update(menu=menu_items)  # Update the icon with the menu list
+    tray_layers.update(menu=menu_items)  # Update the icon with the menu list
     return hids_dict
 
 
@@ -82,24 +82,52 @@ def menu_update():
 # https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getkeystate
 def check_locks():
     lock_keys = {
-        'VK_CAPITAL': 0x14,
-        'VK_NUMLOCK': 0x90,
-        'VK_SCROLL': 0x91,
+        'CAP': 0x14,
+        'NUM': 0x90,
+        # 'VK_SCROLL': 0x91,
     }
     lock_states = {k: hllDll.GetKeyState(v) for k, v in lock_keys.items()}
     return lock_states
 
 
+def change_locks(lock_states):
+    message = ''
+    if lock_states['CAP'] == 1:
+        message += 'Caps Lock = ON'
+    else:
+        message += 'Caps Lock = OFF'
+    if lock_states['NUM'] == 1:
+        message += '\nNum Lock = ON'
+    else:
+        message += '\nNum Lock = OFF'
+    tray_layers.ShowMessage(
+        title='Lock States',
+        message=message,
+        time=(10, 1000),
+        filename='data\\locks.png',
+    )
+    print(lock_states)
+    return
+
+
 if __name__ == "__main__":
-    # Create the tray icon
-    tray = SystemTray(
+    # Create the tray icon for layers
+    tray_layers = SystemTray(
             menu=['BLANK', ['Refresh', '---', 'E&xit']],
             filename='data\\default.png',
     )
+    # Create the tray icon for locks
+    # tray_locks = SystemTray(
+    #         # menu=['BLANK', ['Refresh', '---', 'E&xit']],
+    #         filename='data\\default.png',
+    # )
+    # tray_locks.hide()
+
     hids_dict = menu_update()  # Populate the menu with HID devices
     device = None
+    lock_states_old = None
     while True:  # The event loop
-        menu_item = tray.read(timeout=100)  # Read the systemtray events/values
+        menu_item = tray_layers.read(timeout=100)  # Read the systemtray
         if menu_item == 'Exit':
             break
         elif menu_item == 'Refresh':
@@ -109,11 +137,13 @@ if __name__ == "__main__":
                     '__ACTIVATED__',
                     '__MESSAGE_CLICKED__',
                     '__DOUBLE_CLICKED__',
-            ]:
+                    ]:
             continue  # If there was no interaction of consequence
         elif menu_item == '__TIMEOUT__':
-            lock_states = check_locks()
-            # change_locks(lock_states)
+            lock_states_new = check_locks()
+            if lock_states_new != lock_states_old:
+                change_locks(lock_states_new)
+            lock_states_old = lock_states_new
         else:
             # Otherwise assume a device was selected
             try:
