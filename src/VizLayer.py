@@ -92,21 +92,21 @@ def check_locks():
 
 def change_locks(lock_states):
     message = ''
-    if lock_states['CAP'] == 1:
+    if lock_states['CAP'] != 0:
         message += 'Caps Lock = ON'
     else:
         message += 'Caps Lock = OFF'
-    if lock_states['NUM'] == 1:
+    if lock_states['NUM'] != 0:
         message += '\nNum Lock = ON'
     else:
         message += '\nNum Lock = OFF'
     tray_layers.ShowMessage(
         title='Lock States',
         message=message,
-        time=(10, 1000),
+        time=(0, 1000),
         filename='data\\locks.png',
     )
-    print(lock_states)
+    # print(lock_states)
     return
 
 
@@ -148,11 +148,11 @@ if __name__ == "__main__":
             # Otherwise assume a device was selected
             try:
                 device.close()  # Try to close any open devices first
-            except:
+            except Exception:
                 pass
             finally:
                 device = hid_read(hids_dict, menu_item)  # Open the device
     try:
         device.close()  # Try to close any open devices first
-    except:
+    except Exception:
         pass
